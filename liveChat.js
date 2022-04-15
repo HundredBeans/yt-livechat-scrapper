@@ -1,14 +1,19 @@
 const { LiveChat } = require("youtube-chat");
-const { getChannelCollectionById, sendNotification } = require("./utils");
+const { getChannelCollectionById, getChannelData, sendNotification } = require("./utils");
 
 /**
  * Function to initiate liveChat instance via channelId
  * @param {string} channelId 
  */
-const initiateLiveChatInstance = async (channelId, channelName, channelLink) => {
+const initiateLiveChatInstance = async (channelId) => {
   const liveChat = new LiveChat({ channelId });
 
   const channelCollection = getChannelCollectionById(channelId);
+  const { channelName, channelLink } = await getChannelData(channelId);
+  if (!channelName || !channelLink) {
+    console.log("ChannelID not found")
+    return false
+  }
 
   liveChat.on("start", liveId => {
     console.log("live started with liveId:", liveId)
@@ -35,9 +40,9 @@ const initiateLiveChatInstance = async (channelId, channelName, channelLink) => 
     }
   });
 
-  await liveChat.start()
+  const result = await liveChat.start()
 
-  return liveChat
+  return result
 }
 
 module.exports = {

@@ -1,21 +1,14 @@
 const { db } = require("./db");
 const https = require("https");
 
-const getAllChannels = async () => {
-  const channels = []
-  const channelRefs = await db.collection("channels").get();
-  channelRefs.docs.forEach(doc => {
-    const channelObj = {
-      id: doc.id,
-      name: doc.data().channelName,
-      link: doc.data().channelLink
-    }
-    channels.push(channelObj)
-  })
-  return channels
-}
-
 const getChannelCollectionById = (id) => db.collection('channels').doc(id)
+
+const getChannelData = async (id) => {
+  const channelCollection = getChannelCollectionById(id);
+  const channelCollectionRefs = await channelCollection.get();
+  const data = channelCollectionRefs.data();
+  return data
+}
 
 const sendNotification = (message) => {
   const token = process.env.TELEGRAM_BOT_TOKEN;
@@ -26,8 +19,14 @@ const sendNotification = (message) => {
   });
 }
 
+const parseChannelId = (args) => {
+  const channelId = args.split("channelId=")[1]
+  return channelId
+}
+
 module.exports = {
-  getAllChannels,
   getChannelCollectionById,
-  sendNotification
+  getChannelData,
+  sendNotification,
+  parseChannelId
 }

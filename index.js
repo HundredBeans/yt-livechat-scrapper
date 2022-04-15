@@ -1,16 +1,17 @@
 require('dotenv').config()
 
 const { initiateLiveChatInstance } = require("./liveChat")
-const { getAllChannels } = require("./utils")
+const { parseChannelId } = require("./utils")
 
+const [channelIdArgs] = process.argv.slice(2)
+const channelId = parseChannelId(channelIdArgs)
 
 const startApp = async () => {
-  const allChannels = await getAllChannels();
-  console.log("Starting liveChat tracker...")
-  await Promise.all(allChannels.map(async (channel) => {
-    console.log(`Tracking for channel: ${channel.name} is started...`)
-    await initiateLiveChatInstance(channel.id, channel.name, channel.link)
-  }))
+  console.log("Starting liveChat tracker")
+  const result = await initiateLiveChatInstance(channelId);
+  if (!result) {
+    console.log("Fail to start")
+  }
 }
 
 startApp()
