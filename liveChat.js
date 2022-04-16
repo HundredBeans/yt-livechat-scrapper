@@ -28,6 +28,10 @@ const initiateLiveChatInstance = async (channelId) => {
       const message = `**Livestream error** in Channel: [${channelName}](${channelLink}). Cause: *${err.message}*`
       sendNotification(message)
     }
+    if (liveChat.liveId) {
+      sendNotification(`Stopping liveChat because of error: ${err.message || err}`)
+      liveChat.stop("Error occured");
+    }
   });
 
   liveChat.on("end", reason => {
