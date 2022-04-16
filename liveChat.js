@@ -24,7 +24,7 @@ const initiateLiveChatInstance = async (channelId) => {
   liveChat.on("error", err => {
     console.log("live error", err)
     // Only send notificatin if livestream found
-    if (liveChat.liveId) {
+    if (liveChat.liveId && err.message) {
       const message = `**Livestream error** in Channel: [${channelName}](${channelLink}). Cause: *${err.message}*`
     }
     sendNotification(message)
